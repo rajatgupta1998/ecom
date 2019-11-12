@@ -1,3 +1,7 @@
-.thumbnail img,h3{
-    max-width: 250px;
+.thumbnail img{
+    max-width: 200px;
+    height: 200px;
+}
+.thumbnail h3{
+    max-width: 200px;
 }
