@@ -18,8 +18,9 @@ passport.deserializeUser(function(id, done){
 passport.use('local.signup', new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
-    passReqToCall: true
+   // passReqToCall: true
 }, function(email, password, done){ // req param ? bigHack
+   // req.checkBody('email', 'Invalid email').notEmpty().isEmail();
     User.findOne({'email': email}, function(err, user){
         if(err){
             return done(err);
