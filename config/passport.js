@@ -19,7 +19,7 @@ passport.use('local.signup', new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCall: true
-}, function(req, email, password, done){
+}, function(email, password, done){ // req param ? bigHack
     User.findOne({'email': email}, function(err, user){
         if(err){
             return done(err);
