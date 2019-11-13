@@ -29,7 +29,14 @@ passport.use('local.signup', new LocalStrategy({
         }
         var newUser = new User();
         newUser.email = email;
-        newUser.password = password;
+        newUser.password = newUser.emcryptPassword(pasword);
+        newUser.save(function(err,result){
+            if(err)
+            {
+                return done(err);
+            }
+            return done(null, newUser);
+        })
     });
 }
 ));
