@@ -41,3 +41,24 @@ passport.use('local.signup', new LocalStrategy({
     });
 }
 ));
+
+// sigin strategy
+passport.use('local.signin', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    // passReqToCallback: true
+}, function( email,password,done){
+    User.findOne({'email': email}, function(err, user){
+        if(err){
+            return done(err);
+        }
+        if (!user){
+            return done(null, false, {message: 'No such email'});
+        }
+        if(!user.validPassword(password)){
+            return done(null, false, {message: 'No such password'});
+        }
+        return done(null, user);
+    });
+
+}));
