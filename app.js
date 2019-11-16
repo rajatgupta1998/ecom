@@ -15,7 +15,7 @@ var validator = require('express-validator');
 var MongoStore = require('connect-mongo')(session);
 var app = express();
 
-mongoose.connect('mongodb://localhost:27017/shopping');
+mongoose.connect('mongodb://localhost:27017/shopping', {useNewUrlParser: true , useUnifiedTopology: true});
 
 // include passport but don't bind to a variable
 require('./config/passport');
