@@ -10,6 +10,7 @@ router.use(csrfProtection);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  var successMsg = req.flash('success')[0];
   Product.find(function (err,docs){
     var productChunks = [];
     var chunkSize = 3;
@@ -17,7 +18,7 @@ router.get('/', function(req, res, next) {
     {
       productChunks.push(docs.slice(i,i + chunkSize));
     }
-    res.render('shop/index', { title: 'Shopping Cart', products: productChunks});
+    res.render('shop/index', { title: 'Shopping Cart', products: productChunks, successMsg: successMsg, noMessages: !successMsg});
   });
 });
 
@@ -49,7 +50,36 @@ router.get('/checkout', function(req, res, next){
   if(!req.session.cart){
     return res.redirect('/shopping-cart');
   }
-  res.render('shop/checkout',{total: Cart.totalPrice});
+  var cart = new Cart(req.session.cart);
+  var errMsg = req.flash('error')[0];
+  res.render('shop/checkout',{total: cart.totalPrice, errMsg: errMsg, noError: !errMsg});
+});
+
+router.post('/checkout',function(req,res,next){
+  if(!req.session.cart){
+    console.log('back to cart')
+    return res.redirect('/shopping-cart');
+  }
+  console.log('errored out')
+  var cart = new Cart(req.session.cart);
+  var stripe = require("stripe")(
+    "sk_test_PyeKgxriZsNsRcZRRY8CSzIg00VURIjaOe"
+    );
+  stripe.charges.create({
+    amount: 100,
+    currency: "usd",
+    source: req.body.stripeToken,
+    description: "Charged for ecom"
+  }, function(err, charge){
+    if(err){
+      // console.log('errored out')
+       req.flash('error', err.message);
+       return res.redirect('/checkout');
+    }
+    req.flash('success', 'successfully bought!');
+    req.session.cart = null;
+    res.redirect('/');
+  });
 });
 
 module.exports = router;
